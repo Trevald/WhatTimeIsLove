@@ -1,0 +1,95 @@
+body {
+	background-color: #FAF6F5;
+	padding: 150px 0 0 50px;
+}
+
+.time {
+	width: 150px;
+	height: 80px;
+	border-radius: 2px;
+	background-color: white;
+
+
+	background-image: linear-gradient(-180deg, rgba(255,255,255,0.50) 0%, #FFFFFF 48%, rgba(255,255,255,0.50) 100%);
+
+
+	padding: 0 15px;
+	position: relative;
+	overflow: hidden;
+}
+
+.time:before {
+	content: '';
+
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+
+	border-radius: 2px;
+
+
+	background-image: linear-gradient(180deg, rgba(252,250,250, .9) 10%, rgba(252,250,250,0) 35%, rgba(252,250,250,0) 65%, rgba(252,250,250, .9) 90%);
+
+	pointer-events: none;
+}
+
+.time:after {
+	content: '';
+	position: absolute;
+	z-index: 20;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	box-shadow: inset 0px 1px 2px 0px rgba(0,0,0,0.15);
+	pointer-events: none;
+	border-radius: 2px;
+}
+
+.time .seperator {
+	position: absolute;
+	top: 12px;
+	left: 50%;
+
+	font-family: 'Aleo';
+	font-weight: 200;
+	font-size: 42px;
+	line-height: 42px;
+}
+
+.time .iscroll {
+	height: 80px;
+	overflow: hidden;
+}
+
+.time .iscroll ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	position: relative;
+	top: 13px;
+}
+
+.time .iscroll ul li {
+	font-family: 'Aleo';
+	font-weight: 200;
+	font-size: 42px;
+	line-height: 42px;
+	margin: 00;
+	display: block;
+	padding: 3px 0;
+	text-align: right;
+}
+
+#hours {
+	width: 40%;
+	float: left;
+}
+
+#minutes {
+	width: 40%;
+	float: right;
+}

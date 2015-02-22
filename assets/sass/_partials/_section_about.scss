@@ -1,0 +1,71 @@
+/* SECTIONS : ABOUT --- */
+
+.section.about {
+	position: absolute;
+	top: 20%;
+	right: 0;
+	left: 60%;
+	bottom: 60%;
+
+	background: url($img_dir + "about-bg.png") 0 0 repeat;
+	background-size: 24px;
+	border-right: none;
+
+	@include at-medium-portrait {
+		top: 10%;
+		bottom: 70%;
+	}
+
+	@include at-medium-landscape {
+		top: 0;
+		right: 0;
+		left: 75%;
+		bottom: 75%;
+	}
+}
+
+.section.about .content {
+}
+
+.section.about h1 {
+	margin: 0 auto;
+
+	font-family: $font_default;
+	font-size: 2.5vh;
+	line-height: 1.3em;
+	color: rgba(0,0,0,.5);
+	text-align: center;
+	padding: 0 5%;
+
+	@include at-medium-portrait {
+		width: 80%;
+
+		font-size: 2.8vw;
+	}
+
+	@include at-medium-landscape {
+		width: 80%;
+
+		font-size: 2vw;
+	}
+}
+
+.section.about .img {
+	height: 60%;
+	width: 90%;
+
+	margin: 0 auto;
+
+	background: url($img_dir + "about-image.svg") 50% 80% no-repeat;
+	background-size: auto 70%;
+
+	@include at-medium-portrait {
+		background-size: auto 60%;
+	}
+
+	@include at-medium-landscape {
+		height: 60%;
+
+		background-size: auto 50%;
+	}
+}

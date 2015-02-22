@@ -1,0 +1,86 @@
+$img_dir: "../../assets/img/";
+$font_dir: "../../assets/fonts/";
+$font_default: "Aleo Light", 'Helvetica Neue', 'Arial', sans-serif;
+
+@import "_partials/_breakpoints";
+@import "_partials/_icons";
+@import "_partials/_mixins";
+
+@import "_partials/_section";
+
+@import "_partials/_section_me";
+@import "_partials/_section_about";
+@import "_partials/_section_contact";
+
+@import "_partials/_section_danskebank";
+@import "_partials/_section_gotland";
+@import "_partials/_section_mammamu";
+@import "_partials/_section_seniorval";
+@import "_partials/_section_aventyrsresor";
+
+@import "_partials/_case";
+
+
+/* RESET --- */
+
+* {
+	margin: 0;
+	padding: 0;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* FONTS : IMPORT --- */
+
+@font-face {
+    font-family: "Aleo Light";
+    src: url($font_dir + "aleo/aleo_light_macroman/Aleo-Light-webfont.eot");
+    src: url($font_dir + "aleo/aleo_light_macroman/Aleo-Light-webfont.eot?#iefix") format("embedded-opentype"),
+         url($font_dir + "aleo/aleo_light_macroman/Aleo-Light-webfont.woff") format("woff"),
+         url($font_dir + "aleo/aleo_light_macroman/Aleo-Light-webfont.ttf") format("truetype"),
+         url($font_dir + "aleo/aleo_light_macroman/Aleo-Light-webfont.svg#aleolight") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+/* BASE --- */
+
+html {
+  box-sizing: border-box;
+  height: 100%;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+	background-color: white;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+
+	font-family: $font_default;
+}
+
+.real-text { visibility: hidden; }
+
+/* PAGES */
+
+.page {
+	position: relative;
+	height: 100%;
+
+	@include at-medium {
+		position: static;
+		height: auto;
+	}
+}
+
+
+/* HELPERS */
+
+.nowrap { white-space: nowrap; }
+
+
+

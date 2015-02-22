@@ -1,0 +1,76 @@
+/* SECTIONS : SENIORVAL --- */
+
+.section.seniorval {
+	position: absolute;
+	top: 70%;
+	right: 50%;
+	bottom: 0;
+	left: 0;
+
+	background: url($img_dir + "seniorval-bg.png") 0 0 repeat;
+	background-size: 24px;
+	border-bottom: none;
+
+	@include at-medium-portrait {
+		top: 60%;
+		bottom: 10%;
+
+		border-bottom: 2px solid white;
+	}
+
+	@include at-medium-landscape {
+		top: 60%;
+		bottom: 0;
+		right: 60%;
+	}
+}
+
+.section.seniorval .content {}
+
+.section.seniorval .content > h1 {
+	height: 35%;
+	width: 100%;
+
+	background: url($img_dir + "seniorval-heading-large.svg") 50% 90% no-repeat;
+	background-size: 80%;
+
+	@include at-medium-portrait {
+		background-position: 50% 80%;
+		background-size: 60%;
+	}
+
+	@include at-medium-landscape {
+		background-position: 50% 80%;
+		background-size: 60%;
+	}
+}
+
+.section.seniorval .subheading {
+	height: 10%;
+	width: 100%;
+
+	margin: 0 auto;
+
+	background: url($img_dir + "seniorval-heading-small.svg") 50% 20% no-repeat;
+	background-size: auto 80%;
+
+	@include at-medium-portrait {
+		background-position: 50% 0%;
+		background-size: auto 100%;
+	}
+
+	@include at-medium-landscape {
+		width: 70%;
+
+		background-position: 50% 0%;
+		background-size: auto 100%;
+	}
+}
+
+.section.seniorval .img {
+	height: 55%;
+	width: 100%;
+
+	background: url($img_dir + "seniorval-image-original.png") 50% 50% no-repeat;
+	background-size: auto 80%;
+}

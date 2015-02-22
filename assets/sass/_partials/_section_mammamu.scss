@@ -1,0 +1,84 @@
+/* SECTIONS : MAMMAMU --- */
+
+.section.mammamu {
+	position: absolute;
+	top: 40%;
+	left: 60%;
+	right: 0;
+	bottom: 30%;
+
+	background: url($img_dir + "mammamu-bg.png") 0 0 repeat;
+	background-size: 70px;
+	border-right: none;
+
+	@include at-medium-portrait {
+		top: 30%;
+		bottom: 58%;
+	}
+
+	@include at-medium-landscape {
+		top: 25%;
+		left: 75%;
+		right: 0;
+		bottom: 40%;
+	}
+}
+
+.section.mammamu .content {}
+
+.section.mammamu .content > h1 {
+	height: 20%;
+	width: 100%;
+
+	background: url($img_dir + "mammamu-heading-large.png") 50% 100% no-repeat;
+	background-size: auto 80%;
+
+	@include at-medium-portrait {
+		float: right;
+
+		width: 60%;
+		height: 60%;
+
+		background-position: 0% 70%;
+		background-size: 80%;
+	}
+}
+
+.section.mammamu .subheading {
+	content: '';
+	display: block;
+	height: 20%;
+	width: 80%;
+
+	margin: 0 auto;
+
+	background: url($img_dir + "mammamu-heading-small.svg") 50% 40% no-repeat;
+	background-size: 100%;
+
+	@include at-medium-portrait {
+		float: right;
+
+		width: 60%;
+		height: 40%;
+
+		background-position: 0% 30%;
+		background-size: 80%;
+	}
+}
+
+.section.mammamu .img {
+	height: 60%;
+	width: 100%;
+
+	background: url($img_dir + "mammamu-image-original.png") 60% 70% no-repeat;
+	background-size: auto 75%;
+
+	@include at-medium-portrait {
+		float: left;
+
+		width: 40%;
+		height: 100%;
+
+		background-position: 60% 50%;
+	}
+}
