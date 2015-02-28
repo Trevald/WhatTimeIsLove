@@ -84,6 +84,12 @@ body {
 	text-align: right;
 }
 
+.wtl-time .wtl-iscroll ul li span {
+	display: inline-block;
+	width: 50%;
+	text-align: center;
+}
+
 .wtl-hours {
 	width: 40%;
 	float: left;
