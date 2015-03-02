@@ -1,17 +1,68 @@
 body {
-	background-color: #FAF6F5;
+	background-color: #f0f0f0;
 	padding: 150px 0 0 50px;
+}
+
+/* FONTS */
+.wtl-year input,
+.wtl-time .wtl-seperator,
+.wtl-time .wtl-iscroll ul li {
+	font-family: 'Aleo', 'HelveticaNeue-UltraLight', 'Calibri', 'Arial', sans-serif;
+	font-weight: 200;
+	-webkit-font-smoothing: antialiased;
+}
+
+.wtl-container {
+	position: relative;
+	margin: 0 auto;
+	background-color: #FAF6F5;
+	box-shadow: rgba(0,0,0,.05) 0 1px 3px;
+	max-width: 400px;
+	min-height: 667px;
+	padding: 70px 0 0 0;
+}
+
+.wtl-year {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: 70px;
+	background-color: white;
+	box-shadow: rgba(0,0,0,.15) 0 1px 3px;
+}
+
+.wtl-year input {
+	display: block;
+	width: 20%;
+	padding: 5px;
+	margin: 0 auto;
+
+	font-size: 36px;
+	line-height: 36px;
+	color: rgba(0,0,0,.5);
+
+	box-shadow: none;
+	border: none;
+}
+
+.wtl-year input:focus {
+	outline: 1px solid #FAF6F5;
+}
+
+.wtl-btn-minus,
+.wtl-btn-minus,
+.wtl-btn-edit {
+	cursor: pointer;
 }
 
 .wtl-time {
 	width: 150px;
 	height: 80px;
 	border-radius: 2px;
+
 	background-color: white;
-
-
 	background-image: linear-gradient(-180deg, rgba(255,255,255,0.50) 0%, #FFFFFF 48%, rgba(255,255,255,0.50) 100%);
-
 
 	padding: 0 15px;
 	position: relative;
@@ -29,8 +80,6 @@ body {
 	left: 0;
 
 	border-radius: 2px;
-
-
 	background-image: linear-gradient(180deg, rgba(252,250,250, .9) 10%, rgba(252,250,250,0) 35%, rgba(252,250,250,0) 65%, rgba(252,250,250, .9) 90%);
 
 	pointer-events: none;
@@ -52,12 +101,11 @@ body {
 .wtl-time .wtl-seperator {
 	position: absolute;
 	top: 12px;
-	left: 50%;
+	left: 48%;
 
-	font-family: 'Aleo';
-	font-weight: 200;
 	font-size: 42px;
 	line-height: 42px;
+	color: #82949E;
 }
 
 .wtl-time .wtl-iscroll {
@@ -74,11 +122,11 @@ body {
 }
 
 .wtl-time .wtl-iscroll ul li {
-	font-family: 'Aleo';
-	font-weight: 200;
 	font-size: 42px;
 	line-height: 42px;
-	margin: 00;
+	color: #82949E;
+
+	margin: 0;
 	display: block;
 	padding: 3px 0;
 	text-align: right;

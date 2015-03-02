@@ -4,9 +4,9 @@
 	WhatTimeIsLove = function(el, options) {
 		this.element = typeof el == 'string' ? document.querySelector(el) : el;
 		this.values = {
-			year    : 2015,
-			month   : 2,
-			day     : 28,
+			year    : 0,
+			month   : 0,
+			day     : 0,
 			hours   : 0,
 			minutes : 0
 		}
@@ -15,7 +15,7 @@
 	}
 
 	WhatTimeIsLove.prototype = {
-		version: '5.1.3',
+		version: '0.1',
 		timeZoneOffset : 0,
 
 		templates : {
@@ -32,16 +32,25 @@
 			this.container.className = 'wtl-container';
 			this.element.parentNode.insertBefore(this.container, this.element.nextSibling);
 
-			// Build the time selector
-			this._timeBuildHTML();
+			// Build the HTML
+			this.buildYearHTML();
+			this.buildTimeHTML();
 
-			// Bind iScroll to the time selector
-			this._timeBindIScroll();
+
+			// Bind handlers to events
+			this.timeBindIScroll();
+			this.yearBindEvents();
 
 			// Get the current timezone
 			this.timeZoneOffset = this.getTimezoneOffset();
 
+			this.setStartDate();
 
+		},
+
+		update : function() {
+			var value = this.getDateTime();
+			this.element.setAttribute('value', value);
 		},
 
 		getDateTime : function() {
@@ -58,6 +67,27 @@
 			return dateTime;
 		},
 
+		setStartDate : function() {
+			var now = new Date();
+				this.setYear(now.getFullYear());
+		},
+
+		/*
+		 * Year functions
+		 */
+
+		 setYear : function(value) {
+		 	this.values.year = value;
+		 	this.container.year.input.setAttribute('value', this.values.year);
+		 	this.update();
+		 },
+
+
+
+
+		/*
+		 * Time functions
+		 */
 		getTimezoneOffset : function() {
 			var timeZonePrefix = '+';
 			var x = new Date();
@@ -88,7 +118,49 @@
 			return timeZoneOffset;
 		},
 
-		_timeBindIScroll : function() {
+		/*
+		 * Event handlers
+		 */
+
+		 events : {
+
+		 	/*
+		 	 * Year handlers
+		 	 */
+
+
+		 },
+
+		/*
+		 * Bind events
+		 */
+		yearBindEvents : function() {
+			var self = this;
+
+			// Handlers
+		 	var editYear = function() {
+		 		self.container.year.input.focus();
+		 	}
+
+		 	var previousYear = function() {
+		 		self.setYear( self.values.year - 1);
+		 	}
+
+		 	var nextYear = function() {
+		 		self.setYear( self.values.year + 1);
+		 	}
+
+			this.container.year.btnMinus.addEventListener('click', previousYear);
+			this.container.year.btnMinus.addEventListener('touchstart', previousYear);
+
+			this.container.year.btnPlus.addEventListener('click', nextYear);
+			this.container.year.btnPlus.addEventListener('touchstart', nextYear);
+
+			this.container.year.btnEdit.addEventListener('click', editYear);
+			this.container.year.btnEdit.addEventListener('touchstart', editYear);
+		},
+
+		timeBindIScroll : function() {
 			self = this;
 			this.iScroll = {};
 			this.iScroll.hours = new IScroll(this.container.time.hours, {
@@ -113,7 +185,50 @@
 			});
 		},
 
-		_timeBuildHTML : function() {
+
+		/*
+		 * Builders
+		 */
+
+		buildYearHTML : function() {
+			// Texts
+			var btnMinusText = document.createTextNode('Previous year');
+			var btnPlusText = document.createTextNode('Next year');
+			var btnEditText = document.createTextNode('Change year');
+
+			// Wrapper for year selector
+			this.container.year = document.createElement('div');
+			this.container.year.className = 'wtl-year';
+
+			// Input
+			this.container.year.input = document.createElement('input');
+			this.container.year.input.className = 'wtl-year-input';
+			this.container.year.input.setAttribute('type', 'tel'); // Use tel so we get numpad on touch devices
+			this.container.year.input.setAttribute('maxlength', '4');
+
+			// Buttons
+			this.container.year.btnMinus = document.createElement('a');
+			this.container.year.btnMinus.className = 'wtl-btn-minus';
+			this.container.year.btnMinus.appendChild(btnMinusText);
+
+			this.container.year.btnPlus = document.createElement('a');
+			this.container.year.btnPlus.className = 'wtl-btn-plus';
+			this.container.year.btnPlus.appendChild(btnPlusText);
+
+			this.container.year.btnEdit = document.createElement('a');
+			this.container.year.btnEdit.className = 'wtl-btn-edit';
+			this.container.year.btnEdit.appendChild(btnEditText);
+
+			// Append everything to container
+			this.container.year.appendChild(this.container.year.input);
+			this.container.year.appendChild(this.container.year.btnMinus);
+			this.container.year.appendChild(this.container.year.btnPlus);
+			this.container.year.appendChild(this.container.year.btnEdit);
+			this.container.appendChild(this.container.year);
+
+		},
+
+		buildTimeHTML : function() {
 			// Wrapper for time selector
 			this.container.time = document.createElement('div');
 			this.container.time.className = 'wtl-time';
@@ -121,12 +236,12 @@
 			// Hours
 			this.container.time.hours = document.createElement('div');
 			this.container.time.hours.className = 'wtl-hours wtl-iscroll';
-			this.container.time.hours.innerHTML = this._getHoursHTML();
+			this.container.time.hours.innerHTML = this.getHoursHTML();
 
 			// Minutes
 			this.container.time.minutes = document.createElement('div');
 			this.container.time.minutes.className = 'wtl-minutes wtl-iscroll';
-			this.container.time.minutes.innerHTML = this._getMinutesHTML();
+			this.container.time.minutes.innerHTML = this.getMinutesHTML();
 
 			// Seperator
 			this.container.time.seperator = document.createElement('div');
@@ -140,15 +255,22 @@
 			this.container.appendChild(this.container.time);
 		},
 
-		_getMinutesHTML : function() {
+		buildHoursContent : function() {
 			var returnString = '';
-			var minutes = this._buildMinutes();
-			returnString+= this.templates.iScroll.replace('%content', minutes).replace('%cssClasses', 'wtl-minutes');
+			for( i = 1 ; i < 25 ; ++i ) {
+				text = i.toString();
+				if( text.length > 1 ) {
+					returnString+= '<li><span>' + text.charAt(0) + '</span><span>' + text.charAt(1) + '</span></li>';
+				} else {
+					returnString+= '<li><span></span><span>' + text + '</span></li>';
+				}
+			}
+			returnString+= '<li>&nbsp;</li>';
 
 			return returnString;
 		},
 
-		_buildMinutes : function() {
+		buildMinutesContent : function() {
 			var returnString = '';
 			for( i = 0 ; i < 60 ; ++i ) {
 				if( i < 10 ) { text = '0' + i; } else { text = i + ''; }
@@ -160,29 +282,24 @@
 			return returnString;
 		},
 
-		_getHoursHTML : function() {
+		getHoursHTML : function() {
 			var returnString = '';
-			var minutes = this._buildHours();
+			var minutes = this.buildHoursContent();
 			returnString+= this.templates.iScroll.replace('%content', minutes).replace('%cssClasses', 'wtl-hours');
 
 			return returnString;
 		},
 
-		_buildHours : function() {
+		getMinutesHTML : function() {
 			var returnString = '';
-			for( i = 1 ; i < 24 ; ++i ) {
-				text = i.toString();
-				if( text.length > 1 ) {
-					returnString+= '<li><span>' + text.charAt(0) + '</span><span>' + text.charAt(1) + '</span></li>';
-				} else {
-					returnString+= '<li><span></span><span>' + text + '</span></li>';
-				}
-			}
-			returnString+= '<li>&nbsp;</li>';
+			var minutes = this.buildMinutesContent();
+			returnString+= this.templates.iScroll.replace('%content', minutes).replace('%cssClasses', 'wtl-minutes');
 
 			return returnString;
 		}
+
 	}
+
 
 	var helpers = {
 
