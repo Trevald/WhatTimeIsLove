@@ -1,6 +1,8 @@
 .wtl-time {
+	position: relative;
+
 	margin: 0 auto;
-	width: 150px;
+	width: 180px;
 	height: 80px;
 	border-radius: 2px;
 
@@ -8,13 +10,21 @@
 	background-image: linear-gradient(-180deg, rgba(255,255,255,0.50) 0%, #FFFFFF 48%, rgba(255,255,255,0.50) 100%);
 
 	padding: 0 15px;
-	position: relative;
-	overflow: hidden;
+
 }
 
 .wtl-time:before {
-	content: '';
+	content: '\e803';
 
+	position: absolute;
+	top: 30px;
+	left: -30px;
+
+	font-size: 18px;
+	color: rgba(0,0,0,.25);
+}
+
+.wtl-time-shadows {
 	position: absolute;
 	z-index: 10;
 	top: 0;
@@ -28,7 +38,7 @@
 	pointer-events: none;
 }
 
-.wtl-time:after {
+.wtl-time-shadows:after {
 	content: '';
 	position: absolute;
 	z-index: 20;

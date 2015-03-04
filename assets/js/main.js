@@ -43,6 +43,7 @@
 			this.buildDayHTML();
 			this.buildYearHTML();
 			this.buildTimeHTML();
+			this.buildSubmitHTML();
 
 			// Bind handlers to events
 			this.monthBindEvents();
@@ -97,7 +98,7 @@
 			var now = new Date();
 			this.values.year = now.getFullYear();
 			this.values.month = now.getMonth();
-			this.values.day = now.getDate();
+			this.values.day = now.getDate(); this.values.day = 19;
 			this.values.hours = now.getHours();
 			this.values.minutes = now.getMinutes();
 			this.update();
@@ -141,6 +142,7 @@
 		 	var currentDate = calendarStart;
 		 	var now = new Date();
 		 	var todayTimestamp = new Date(this.values.year, this.values.month, this.values.day).getTime();
+		 	var nowTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 		 	var weeksHTML = '';
 		 	var cssClass = '';
 		 	while( currentDate <= calendarEnd ) {
@@ -156,7 +158,7 @@
 		 		if( currentDate.getMonth() > this.values.month ) { cssClass+= 'wtl-next-month '; }
 
 		 		// Today
-		 		if( currentDate == now ) { cssClass+= 'wtl-today '; }
+		 		if( currentDate.getTime() == nowTimestamp ) { cssClass+= 'wtl-today '; }
 
 		 		// Selected
 		 		if( currentDate.getTime() == todayTimestamp ) { cssClass+= 'wtl-active '; }
@@ -326,6 +328,19 @@
 		 * Builders
 		 */
 
+		 buildSubmitHTML : function() {
+		 	// Text
+		 	var submitText = document.createTextNode('Done!');
+
+		 	// Submit button
+		 	this.container.submit = document.createElement('button');
+		 	this.container.submit.className = 'wtl-submit';
+		 	this.container.submit.appendChild(submitText);
+
+		 	// Append to container
+		 	this.container.appendChild(this.container.submit);
+		 },
+
 		buildDayHTML : function() {
 			// Wrapper for day selector
 			this.container.days = document.createElement('div');
@@ -454,6 +469,10 @@
 			this.container.time = document.createElement('div');
 			this.container.time.className = 'wtl-time';
 
+			// Shadows
+			this.container.time.shadows = document.createElement('div');
+			this.container.time.shadows.className = 'wtl-time-shadows';
+
 			// Hours
 			this.container.time.hours = document.createElement('div');
 			this.container.time.hours.className = 'wtl-hours wtl-iscroll';
@@ -470,6 +489,7 @@
 			this.container.time.seperator.innerHTML = this.templates.timeSeperator;
 
 			// Append everything to container
+			this.container.time.appendChild(this.container.time.shadows);
 			this.container.time.appendChild(this.container.time.hours);
 			this.container.time.appendChild(this.container.time.seperator);
 			this.container.time.appendChild(this.container.time.minutes);

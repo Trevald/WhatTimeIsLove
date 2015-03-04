@@ -1,0 +1,31 @@
+.wtl-submit {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+
+	display: block;
+	width: 100%;
+	padding: 20px 0;
+
+	font-size: 30px;
+	line-height: 32px;
+	color: #fff;
+	text-align: center;
+
+	background-color: rgba(255,0,0,.4);
+	border: none;
+	cursor: pointer;
+
+	-webkit-appearance: none;
+	transition: all ease .3s;
+}
+
+.wtl-submit:hover {
+	background-color: rgba(255,0,0,.3);
+}
+
+.wtl-submit:active {
+	padding: 22px 0 18px;
+	//background-color: rgba(255,0,0,.5);
+}
