@@ -36,7 +36,7 @@
 /* FONTS */
 
 .wtl-submit,
-.wtl-days-table tbody td,
+.wtl-table-cell,
 .wtl-year input,
 .wtl-seperator,
 .wtl-iscroll ul li {
@@ -45,9 +45,9 @@
 	-webkit-font-smoothing: antialiased;
 }
 
-.wtl-days-table tbody td.wtl-today,
-.wtl-days-table tbody td.wtl-active,
-.wtl-days-table thead th,
+.wtl-today,
+.wtl-active,
+.wtl-table-heading,
 .wtl-month-value {
     font-family: 'Aleo Regular', 'HelveticaNeue-UltraLight', 'Calibri', 'Arial', sans-serif;
     font-weight: normal;

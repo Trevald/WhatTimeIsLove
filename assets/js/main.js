@@ -46,6 +46,7 @@
 			this.buildSubmitHTML();
 
 			// Bind handlers to events
+			this.daysBindEvents();
 			this.monthBindEvents();
 			this.yearBindEvents();
 			this.timeBindIScroll();
@@ -108,17 +109,17 @@
 		 * Year functions
 		 */
 
-		 setYear : function(value) {
+		setYear : function(value) {
 		 	this.values.year = value;
 		 	this.update();
-		 },
+		},
 
 
 		/*
 		 * Month functions
 		 */
 
-		 setMonth : function(value) {
+		setMonth : function(value) {
 		 	if( value < 0 ) {
 		 		this.values.month = 11;
 		 	} else if( value > 11 ) {
@@ -128,13 +129,13 @@
 		 	}
 
 		 	this.update();
-		 },
+		},
 
-		 getMonthString : function(value) {
+		getMonthString : function(value) {
 		 	return this.monthStrings[value];
-		 },
+		},
 
-		 renderDays : function() {
+		renderDays : function() {
 		 	var calendarStart = this.getCalendarStart();
 		 	var calendarEnd = this.getCalendarEnd();
 		 	//console.log(calendarStart, calendarEnd);
@@ -145,25 +146,52 @@
 		 	var nowTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 		 	var weeksHTML = '';
 		 	var cssClass = '';
+		 	var trs = [];
+		 	var tds = [];
+
+		 	// Remove old TDs
+		 	while (this.container.days.tbody.firstChild) {
+    			this.container.days.tbody.removeChild(this.container.days.tbody.firstChild);
+			}
+
 		 	while( currentDate <= calendarEnd ) {
-		 		cssClass = '';
+		 		cssClass = 'wtl-table-cell';
 
 		 		// Sunday
 		 		if( currentDate.getDay() == 0 ) { weeksHTML+= '<tr>'; }
 
+		 		// Sunday
+		 		if( currentDate.getDay() == 0 ) {
+		 			trs[trs.length] = document.createElement('div');
+		 			trs[trs.length-1].className = 'wtl-table-row';
+
+		 			this.container.days.tbody.appendChild(trs[trs.length-1]);
+		 		}
+
+		 		tds[tds.length] = document.createElement('span');
+
 		 		// Older month
-		 		if( currentDate.getMonth() < this.values.month ) { cssClass+= 'wtl-previous-month '; }
+		 		if( currentDate.getMonth() < this.values.month ) { cssClass+= ' wtl-previous-month '; tds[tds.length-1].classList.add('wtl-previous-month'); }
 
 		 		// Later month
-		 		if( currentDate.getMonth() > this.values.month ) { cssClass+= 'wtl-next-month '; }
+		 		if( currentDate.getMonth() > this.values.month ) { cssClass+= ' wtl-next-month '; tds[tds.length-1].classList.add('wtl-next-month');}
 
 		 		// Today
-		 		if( currentDate.getTime() == nowTimestamp ) { cssClass+= 'wtl-today '; }
+		 		if( currentDate.getTime() == nowTimestamp ) { cssClass+= ' wtl-today '; tds[tds.length-1].classList.add('wtl-today');}
 
 		 		// Selected
-		 		if( currentDate.getTime() == todayTimestamp ) { cssClass+= 'wtl-active '; }
+		 		if( currentDate.getTime() == todayTimestamp ) { cssClass+= ' wtl-active '; tds[tds.length-1].classList.add('wtl-active');}
 
 		 		weeksHTML+= '<td class="' + cssClass + '">' + currentDate.getDate() + '</td>';
+
+
+		 		tds[tds.length-1].className = cssClass;
+		 		tds[tds.length-1].appendChild(
+		 			document.createTextNode(currentDate.getDate())
+		 		);
+		 		trs[trs.length-1].appendChild(tds[tds.length-1]);
+		 		//this.container.days.tbody.appendChild(tds[tds.length-1]);
+
 
 		 		// Saturday
 		 		if( currentDate.getDay() == 6 ) { weeksHTML+= '</tr>'; }
@@ -171,11 +199,13 @@
 		 		currentDate.setDate( currentDate.getDate() + 1 );
 		 	}
 
-		 	this.container.days.tbody.innerHTML = weeksHTML;
 
-		 },
+		 	//this.container.days.tbody.innerHTML = weeksHTML;
 
-		 getCalendarStart : function() {
+
+		},
+
+		getCalendarStart : function() {
 		 	var firstOfMonth = new Date(this.values.year, this.values.month, 1);
 		 	var firstOfMonthWeekday = firstOfMonth.getDay();
 		 	//console.log('This month starts on a: ' + firstOfMonthWeekday);
@@ -183,9 +213,9 @@
 		 	calendarStart.setDate(calendarStart.getDate() - firstOfMonthWeekday );
 		 	//console.log('calendarStart: ' + calendarStart);
 		 	return calendarStart;
-		 },
+		},
 
-		 getCalendarEnd : function() {
+		getCalendarEnd : function() {
 		 	var lastOfMonth = new Date(this.values.year, this.values.month + 1, 0);
 		 	var lastOfMonthWeekday = lastOfMonth.getDay();
 		 	//console.log('This month ends on a: ' + lastOfMonthWeekday);
@@ -193,14 +223,14 @@
 		 	calendarEnd.setDate(calendarEnd.getDate() + ( 6 - lastOfMonthWeekday ) );
 		 	//console.log('calendarEnd: ' + calendarEnd);
 		 	return calendarEnd;
-		 },
+		},
 
 		 /*
 		  * Day functions
 		  */
 
 		 setDay : function(value) {
-		 	this.values.date = value;
+		 	this.values.day = value;
 		 	this.update();
 		 },
 
@@ -241,11 +271,7 @@
 		 * Event handlers
 		 */
 
-		 events : {
-
-		 	/*
-		 	 * Year handlers
-		 	 */
+		events : {
 
 
 		 },
@@ -253,6 +279,42 @@
 		/*
 		 * Bind events
 		 */
+		daysBindEvents : function() {
+			var self = this;
+
+			// Handlers
+			var clickActiveDay = function(e) {
+				//this.style.display = 'none';
+				console.log(e);
+				console.log($(e.target));
+				//e.target.style.display = 'none';
+
+
+
+		 		if( e.target && e.target.nodeName == 'SPAN' ) {
+		 			//console.log(this.getElementsByTagName('td'));
+		 			//var oldActive = helpers.getElementByClassName( this.getElementsByTagName('td'), 'wtl-active');
+		 			var oldActive = this.getElementsByClassName('wtl-active')[0];
+		 			//this.getElementsByClassName('wtl-active')[0].className = '';
+
+		 			console.log(oldActive);
+		 			if( oldActive ) {
+		 				//oldActive.classList.remove('wtl-active');
+		 				helpers.removeClass(oldActive, 'wtl-active');
+		 			}
+		 			//console.log(e.target);
+		 			e.target.className = e.target.className + ' wtl-active';
+		 			//e.target.classList.add('wtl-active');
+		 			//e.target.className = 'wtl-active';
+		 			self.setDay(e.target.innerHTML);
+		 		}
+			}
+			this.container.days.table.addEventListener('click', clickActiveDay);
+			//this.container.days.table.addEventListener('touchstart', clickActiveDay);
+
+
+		},
+
 		monthBindEvents : function() {
 			var self = this;
 
@@ -347,23 +409,25 @@
 			this.container.days.className = 'wtl-days';
 
 			// TABLE for days
-			this.container.days.table = document.createElement('table');
+			this.container.days.table = document.createElement('div');
 			this.container.days.table.className = 'wtl-days-table';
 
 			// THEAD for days
-			this.container.days.thead = document.createElement('thead');
+			this.container.days.thead = document.createElement('div');
+			this.container.days.thead.className = 'wtl-days-thead';
 			//this.container.days.thead.tr = document.createElement('tr');
 			//this.container.days.thead.appendChild(this.container.days.thead.tr);
 
 			// THs for headings
 			var tHeadHTML = '';
 			for( i = 0; i < this.dayShortStrings.length; ++i ) {
-				tHeadHTML+= '<th class="wtl-day-' + this.dayShortStrings[i].toLowerCase() + '">' + this.dayShortStrings[i] + '</th>';
+				tHeadHTML+= '<span class="wtl-table-heading wtl-day-' + this.dayShortStrings[i].toLowerCase() + '">' + this.dayShortStrings[i] + '</span>';
 			}
-			this.container.days.thead.innerHTML = '<tr>' + tHeadHTML +'</tr>';
+			this.container.days.thead.innerHTML = '<div class="wtl-table-row">' + tHeadHTML +'</div>';
 
 			// TBODY for days
-			this.container.days.tbody = document.createElement('tbody');
+			this.container.days.tbody = document.createElement('div');
+			this.container.days.tbody.className = 'wtl-days-tbody';
 
 			// Append everything to container
 			this.container.days.table.appendChild(this.container.days.thead);
@@ -553,6 +617,19 @@
 		pad : function( value, max) {
 			value = value.toString();
 			return value.length < max ? WhatTimeIsLove.helpers.pad('0' + value, max) : value;
+		},
+
+		getElementByClassName : function(elements, className) {
+			for( i in elements ) {
+  				if((' ' + elements[i].className + ' ').indexOf(' ' + className + ' ') > -1) {
+            		return elements[i];
+        		}
+			}
+			return null;
+		},
+
+		removeClass : function(element, remove) {
+			element.className = element.className.replace( new RegExp(" ?\\b"+remove+"\\b") ,'');
 		}
 	}
 	WhatTimeIsLove.helpers = helpers;
