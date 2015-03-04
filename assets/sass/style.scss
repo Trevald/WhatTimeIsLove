@@ -1,0 +1,33 @@
+@import 'partials/_fonts.scss';
+@import 'partials/_year.scss';
+@import 'partials/_month.scss';
+@import 'partials/_day.scss';
+@import 'partials/_time.scss';
+
+html { box-sizing: border-box; }
+
+*, *:before, *:after { box-sizing: inherit; }
+
+body {
+	background-color: #f0f0f0;
+	padding: 150px 0 0 50px;
+}
+
+.wtl-container {
+	position: relative;
+	margin: 0 auto;
+	background-color: #FFF1F0;
+	box-shadow: rgba(0,0,0,.05) 0 1px 3px;
+	max-width: 400px;
+	min-height: 667px;
+	padding: 70px 0 0 0;
+}
+
+.wtl-container {
+	  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

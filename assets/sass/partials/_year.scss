@@ -1,0 +1,76 @@
+.wtl-year {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+
+	padding-top: 10px;
+	height: 70px;
+
+	background-color: white;
+	box-shadow: rgba(0,0,0,.15) 0 1px 3px;
+}
+
+.wtl-year-input-wrapper {
+	position: relative;
+
+	width: 100px;
+	margin: 0 auto;
+}
+
+.wtl-year input {
+	display: block;
+	width: 100%;
+	padding: 5px;
+	margin: 0 auto;
+
+	font-size: 36px;
+	line-height: 36px;
+	text-align: center;
+	color: rgba(0,0,0,.5);
+
+	box-shadow: none;
+	border: none;
+}
+
+.wtl-year input:focus {
+	outline: 1px solid #FAF6F5;
+}
+
+.wtl-btn-minus,
+.wtl-btn-plus,
+.wtl-btn-edit {
+	position: absolute;
+	cursor: pointer;
+
+	padding: 5px 15px;
+
+	font-size: 24px;
+	line-height: 30px;
+	color: #82949E;
+
+	outline: 1px dotted #ccC;
+}
+
+.wtl-btn-edit {
+	font-size: 18px;
+	line-height: 18px;
+}
+
+.wtl-btn-minus {
+	top: 15px;
+	left: 10px;
+}
+
+.wtl-btn-plus {
+	top: 15px;
+	right: 10px;
+}
+
+.wtl-btn-edit {
+	top: 5px;
+	right: -20px;
+
+	padding: 10px;
+}
+

@@ -1,0 +1,58 @@
+/* FONTS : IMPORT --- */
+
+@font-face {
+    font-family: 'Aleo Light';
+    src: url('../fonts/aleo/aleo_light_macroman/Aleo-Light-webfont.eot');
+    src: url('../fonts/aleo/aleo_light_macroman/Aleo-Light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/aleo/aleo_light_macroman/Aleo-Light-webfont.woff') format('woff'),
+         url('../fonts/aleo/aleo_light_macroman/Aleo-Light-webfont.ttf') format('truetype'),
+         url('../fonts/aleo/aleo_light_macroman/Aleo-Light-webfont.svg#aleolight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Aleo Regular';
+    src: url('../fonts/aleo/aleo_regular_macroman/Aleo-Regular-webfont.eot');
+    src: url('../fonts/aleo/aleo_regular_macroman/Aleo-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/aleo/aleo_regular_macroman/Aleo-Regular-webfont.woff') format('woff'),
+         url('../fonts/aleo/aleo_regular_macroman/Aleo-Regular-webfont.ttf') format('truetype'),
+         url('../fonts/aleo/aleo_regular_macroman/Aleo-Regular-webfont.svg#aleoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Wtl Icons';
+    src: url('../fonts/fontello/wtl_icons.eot');
+    src: url('../fonts/fontello/wtl_icons.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/fontello/wtl_icons.woff') format('woff'),
+         url('../fonts/fontello/wtl_icons.ttf') format('truetype'),
+         url('../fonts/fontello/wtl_icons.svg#wtlicons') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* FONTS */
+
+.wtl-year input,
+.wtl-seperator,
+.wtl-iscroll ul li {
+	font-family: 'Aleo Light', 'HelveticaNeue-UltraLight', 'Calibri', 'Arial', sans-serif;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+}
+
+.wtl-month-value {
+    font-family: 'Aleo Regular', 'HelveticaNeue-UltraLight', 'Calibri', 'Arial', sans-serif;
+    font-weight: normal;
+    -webkit-font-smoothing: antialiased;
+}
+
+.wtl-btn-minus,
+.wtl-btn-plus,
+.wtl-btn-edit {
+	font-family: 'Wtl Icons';
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+}

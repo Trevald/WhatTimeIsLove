@@ -1,0 +1,31 @@
+.wtl-month {
+	position: relative;
+
+	padding: 25px 0;
+	background-color: #e2e2e4;
+}
+
+.wtl-month-value {
+	font-size: 18px;
+	line-height: 18px;
+	text-align: center;
+	color: #82949E;
+}
+
+.wtl-month .wtl-btn-minus,
+.wtl-month .wtl-btn-plus {
+	top: 15px;
+
+	padding: 10px 15px;
+
+	font-size: 18px;
+	line-height: 18px;
+}
+
+.wtl-month .wtl-btn-minus {
+	left: 80px;
+}
+
+.wtl-month .wtl-btn-plus {
+	right: 80px;
+}
