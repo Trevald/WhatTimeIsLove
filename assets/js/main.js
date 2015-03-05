@@ -3,29 +3,12 @@
 
 	WhatTimeIsLove = function(el, options) {
 		this.element = typeof el == 'string' ? document.querySelector(el) : el;
-		this.view = {
-			year    : 0,
-			month   : 0,
-			day     : 0,
-			hours   : 0,
-			minutes : 0,
-			date : function() {
-				return new Date(this.year, this.month, this.day, this.hours, this.minutes);
-			}
-		}
-		this.values = {
-			year    : 0,
-			month   : 0,
-			day     : 0,
-			hours   : 0,
-			minutes : 0,
-			date : function() {
-				return new Date(this.year, this.month, this.day, this.hours, this.minutes);
-			}
-		}
 
+		// Holds the data that is currently rendered on screen
 		this.viewDate = new Date();
-		this.valueDate = null;
+
+		// Holds the data that user submits to the original input
+		this.date = null;
 
 		this._init();
 	}
@@ -69,46 +52,27 @@
 			// Get the current timezone
 			this.timeZoneOffset = this.getTimezoneOffset();
 
-			this.setStartDate();
-
-			// Render weekly calendar
-			this.renderDays();
-
+			// Render initial values
+			this.updateView();
 		},
 
-		update : function() {
-			this.container.year.input.setAttribute('value', this.view.year);
-			this.container.month.value.innerHTML = this.getMonthString(this.view.month);
+		updateView : function() {
+			console.log(this.date);
+			this.container.year.input.setAttribute('value', this.viewDate.getFullYear());
+			this.container.month.value.innerHTML = this.getMonthString(this.viewDate.getMonth());
 			this.renderDays();
-
-			//this.element.setAttribute('value', this.date());
-		},
-
-		getDate : function() {
-			return new Date(this.view.year, this.view.month, this.view.day );
 		},
 
 		getDateTime : function() {
-			var year  	= helpers.pad(this.view.year, 4);
-			var month 	= helpers.pad(this.view.month+1, 2);
-			var day   	= helpers.pad(this.view.day, 2);
-			var hours 	= helpers.pad(this.view.hours, 2);
-			var minutes = helpers.pad(this.view.minutes, 2);
+			var year  	= helpers.pad(this.date.getFullYear(), 4);
+			var month 	= helpers.pad(this.date.getMonth() + 1, 2);
+			var day   	= helpers.pad(this.date.getDate(), 2);
+			var hours 	= helpers.pad(this.date.getHours(), 2);
+			var minutes = helpers.pad(this.date.getMinutes(), 2);
 
 			var dateTime = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':00' + this.timeZoneOffset;
-			//var dateTime = new Date(year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':00' + this.timeZoneOffset).toISOString()
-			//console.log(dateTime);
-			return dateTime;
-		},
 
-		setStartDate : function() {
-			var now = new Date();
-			this.view.year = now.getFullYear();
-			this.view.month = now.getMonth();
-			this.view.day = now.getDate(); this.view.day = 19;
-			this.view.hours = now.getHours();
-			this.view.minutes = now.getMinutes();
-			this.update();
+			return dateTime;
 		},
 
 		/*
@@ -116,8 +80,8 @@
 		 */
 
 		setYear : function(value) {
-		 	this.view.year = value;
-		 	this.update();
+		 	this.viewDate.setYear(value);
+		 	this.updateView();
 		},
 
 		/*
@@ -126,14 +90,14 @@
 
 		setMonth : function(value) {
 		 	if( value < 0 ) {
-		 		this.view.month = 11;
+		 		this.viewDate.setMonth(11);
 		 	} else if( value > 11 ) {
-		 		this.view.month = 0;
+		 		this.viewDate.setMonth(0);
 		 	} else {
-		 		this.view.month = value;
+		 		this.viewDate.setMonth(value);
 		 	}
 
-		 	this.update();
+		 	this.updateView();
 		},
 
 		getMonthString : function(value) {
@@ -144,16 +108,14 @@
 		 	var calendarStart = this.getCalendarStart();
 		 	var calendarEnd   = this.getCalendarEnd();
 
-		 	var now = new Date();
 		 	var currentDate = calendarStart;
-		 	var activeDate = helpers.getStringDate(this.values.date());
-		 	var nowTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+		 	var activeDate = helpers.getStringDate(this.date);
+		 	var today = helpers.getStringDate(new Date());
+		 	console.log('activeDate: ' + activeDate);
 
 		 	var cssClass = '';
 		 	var trs = [];
 		 	var tds = [];
-
-		 	console.log('activeDate:' + activeDate);
 
 		 	// Remove old TDs
 		 	while (this.container.days.tbody.firstChild) {
@@ -174,13 +136,13 @@
 		 		tds[tds.length] = document.createElement('span');
 
 		 		// Older month
-		 		if( currentDate.getMonth() < this.view.month ) { cssClass+= ' wtl-previous-month '; }
+		 		if( currentDate.getMonth() < this.viewDate.getMonth() ) { cssClass+= ' wtl-previous-month '; }
 
 		 		// Later month
-		 		if( currentDate.getMonth() > this.view.month ) { cssClass+= ' wtl-next-month '; }
+		 		if( currentDate.getMonth() > this.viewDate.getMonth() ) { cssClass+= ' wtl-next-month '; }
 
 		 		// Today
-		 		if( currentDate.getTime() == nowTimestamp ) { cssClass+= ' wtl-today '; }
+		 		if( helpers.getStringDate(currentDate) == today ) { cssClass+= ' wtl-today '; }
 
 		 		// Active
 		 		if( helpers.getStringDate(currentDate) == activeDate ) { cssClass+= ' wtl-active '; }
@@ -199,22 +161,22 @@
 		},
 
 		getCalendarStart : function() {
-		 	var firstOfMonth = new Date(this.view.year, this.view.month, 1);
+		 	var firstOfMonth = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1);
 		 	var firstOfMonthWeekday = firstOfMonth.getDay();
-		 	//console.log('This month starts on a: ' + firstOfMonthWeekday);
-		 	var calendarStart = new Date(this.view.year, this.view.month, 1);
+
+		 	var calendarStart = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1);
 		 	calendarStart.setDate(calendarStart.getDate() - firstOfMonthWeekday );
-		 	//console.log('calendarStart: ' + calendarStart);
+
 		 	return calendarStart;
 		},
 
 		getCalendarEnd : function() {
-		 	var lastOfMonth = new Date(this.view.year, this.view.month + 1, 0);
+		 	var lastOfMonth = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth() + 1, 0);
 		 	var lastOfMonthWeekday = lastOfMonth.getDay();
-		 	//console.log('This month ends on a: ' + lastOfMonthWeekday);
-		 	var calendarEnd = new Date(this.view.year, this.view.month + 1, 0);
+
+		 	var calendarEnd = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth() + 1, 0);
 		 	calendarEnd.setDate(calendarEnd.getDate() + ( 6 - lastOfMonthWeekday ) );
-		 	//console.log('calendarEnd: ' + calendarEnd);
+
 		 	return calendarEnd;
 		},
 
@@ -223,37 +185,21 @@
 		  */
 
 		 setValue : function() {
-		 	this.values.year    = this.view.year;
-		 	this.values.month   = this.view.month;
-		 	this.values.day     = this.view.day;
-		 	this.values.hours   = this.view.hours;
-		 	this.values.minutes = this.view.minutes;
+		 	if( this.date === null ) { this.date = new Date(); }
+
+		 	this.date.setYear(this.viewDate.getFullYear());
+		 	this.date.setMonth(this.viewDate.getMonth());
+		 	this.date.setDate(this.viewDate.getDate());
+		 	this.date.setHours(this.viewDate.getHours());
+		 	this.date.setMinutes(this.viewDate.getMinutes());
+
 		 	this.updateInput();
 		 },
 
-		 updateInput : function() {
-		 	this.element.setAttribute('value', this.getDateTime());
-		 },
-
-		 /*
-		  * Date functions
-		  */
-
-		setDate : function(value) {
-			this.view.year = value.getFullYear();
-			this.view.month = value.getMonth();
-			this.view.day = value.getDate();
-			this.update();
+		updateInput : function() {
+			this.element.setAttribute('value', this.getDateTime());
 		},
 
-		 /*
-		  * Day functions
-		  */
-
-		 setDay : function(value) {
-		 	this.view.day = value;
-		 	//this.update();
-		 },
 
 		/*
 		 * Time functions
@@ -280,22 +226,10 @@
 				timeZoneOffset = timeZoneOffset.substring(1, timeZoneOffset.length);
 			}
 
-
 			timeZoneOffset = timeZonePrefix + helpers.pad(timeZoneOffset, 5)
 
-
-			//console.log(timeZoneOffset);
 			return timeZoneOffset;
 		},
-
-		/*
-		 * Event handlers
-		 */
-
-		events : {
-
-
-		 },
 
 		/*
 		 * Bind events
@@ -305,13 +239,12 @@
 			var self = this;
 
 			var triggerSubmit = function() {
-				console.log(1);
-				self.setValue();
+				//self.setValue();
+				// Close datepicker
 			}
 
 			this.container.submit.addEventListener('click', triggerSubmit);
 			this.container.submit.addEventListener('touchstart', triggerSubmit);
-
 		},
 
 		daysBindEvents : function() {
@@ -325,15 +258,11 @@
 		 				helpers.removeClass(oldActive, 'wtl-active');
 		 			}
 		 			e.target.className = e.target.className + ' wtl-active';
-		 			var date = new Date(
-		 				e.target.getAttribute('data-year'),
-		 				e.target.getAttribute('data-month'),
-		 				e.target.getAttribute('data-date')
-		 			);
-		 			console.log(e.target.getAttribute('data-date'));
-		 			console.log(date);
-		 			self.setDay(e.target.getAttribute('data-date'));
-		 			self.setDate(date);
+
+		 			self.viewDate.setYear( e.target.getAttribute('data-year') );
+		 			self.viewDate.setMonth( e.target.getAttribute('data-month') );
+		 			self.viewDate.setDate( e.target.getAttribute('data-date') );
+					self.setValue();
 		 		}
 			}
 			this.container.days.table.addEventListener('click', clickActiveDay);
@@ -345,11 +274,11 @@
 
 			// Handlers
 		 	var previousMonth = function() {
-		 		self.setMonth( self.view.month - 1);
+		 		self.setMonth( self.viewDate.getMonth() - 1);
 		 	}
 
 		 	var nextMonth = function() {
-		 		self.setMonth( self.view.month + 1);
+		 		self.setMonth( self.viewDate.getMonth() + 1);
 		 	}
 
 			this.container.month.btnMinus.addEventListener('click', previousMonth);
@@ -368,11 +297,11 @@
 		 	}
 
 		 	var previousYear = function() {
-		 		self.setYear( self.view.year - 1);
+		 		self.setYear( self.viewDate.getFullYear() - 1);
 		 	}
 
 		 	var nextYear = function() {
-		 		self.setYear( self.view.year + 1);
+		 		self.setYear( self.viewDate.getFullYear() + 1);
 		 	}
 
 			this.container.year.btnMinus.addEventListener('click', previousYear);
@@ -394,9 +323,7 @@
 			});
 			this.iScroll.hours.on('scrollEnd', function(e) {
 				var value = WhatTimeIsLove.helpers.getIScrollPage(this) + 1;
-				self.view.hours = value;
-				//console.log(self.getDateTime());
-				//console.log( WhatTimeIsLove.helpers.getIScrollPage(this) + 1);
+				self.viewDate.setHours(value);
 			});
 			this.iScroll.minutes = new IScroll(this.container.time.minutes, {
 		 		mouseWheel: true,
@@ -405,7 +332,7 @@
 			this.iScroll.minutes.on('scrollEnd', function(e) {
 				var value = WhatTimeIsLove.helpers.getIScrollPage(this);
 				if( value == 60 ) { value = 0; }
-				self.view.minutes = value;
+				self.viewDate.setMinutes(value);
 				//console.log(self.getDateTime());
 			});
 		},
@@ -440,8 +367,6 @@
 			// THEAD for days
 			this.container.days.thead = document.createElement('div');
 			this.container.days.thead.className = 'wtl-days-thead';
-			//this.container.days.thead.tr = document.createElement('tr');
-			//this.container.days.thead.appendChild(this.container.days.thead.tr);
 
 			// THs for headings
 			var tHeadHTML = '';
@@ -484,23 +409,6 @@
 			this.container.month.btnPlus = document.createElement('a');
 			this.container.month.btnPlus.className = 'wtl-btn-plus';
 			this.container.month.btnPlus.appendChild(btnPlusText);
-
-			/*
-			// Can SELECT be freely styled in all browsers?
-
-			// Select
-			this.container.month.select = document.createElement('select');
-			this.container.month.select.className = 'wtl-month-select';
-			this.container.month.select.setAttribute('size', '1');
-
-			// Options
-			for( i = 0 ; i < optionsText.length ; ++i ) {
-				option = document.createElement('option');
-				option.appendChild(document.createTextNode(optionsText[i]));
-				option.setAttribute('value', i);
-				this.container.month.select.appendChild(option);
-			}
-			*/
 
 			// Append everything to container
 			this.container.month.appendChild(this.container.month.value);
@@ -644,15 +552,6 @@
 			return value.length < max ? WhatTimeIsLove.helpers.pad('0' + value, max) : value;
 		},
 
-		getElementByClassName : function(elements, className) {
-			for( i in elements ) {
-  				if((' ' + elements[i].className + ' ').indexOf(' ' + className + ' ') > -1) {
-            		return elements[i];
-        		}
-			}
-			return null;
-		},
-
 		removeClass : function(element, remove) {
 			element.className = element.className.replace( new RegExp(" ?\\b"+remove+"\\b") ,'');
 		},
@@ -663,6 +562,8 @@
 		 * @return {String}
 		 */
 		getStringDate : function(date) {
+			if( typeof(date) !== 'object' || date === null ) { return null; }
+			if( typeof(date.getMonth) !== 'function' ) { return null; }
 			return date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate();
 		}
 	}
