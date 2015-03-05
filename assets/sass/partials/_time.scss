@@ -1,7 +1,7 @@
 .wtl-time {
 	position: relative;
 
-	margin: 0 auto;
+	margin: 0 auto 20px auto;
 	width: 180px;
 	height: 80px;
 	border-radius: 2px;
@@ -53,7 +53,7 @@
 
 .wtl-time .wtl-seperator {
 	position: absolute;
-	top: 12px;
+	top: 17px;
 	left: 48%;
 
 	font-size: 42px;
@@ -71,7 +71,7 @@
 	padding: 0;
 	list-style: none;
 	position: relative;
-	top: 13px;
+	top: 18px;
 }
 
 .wtl-time .wtl-iscroll ul li {

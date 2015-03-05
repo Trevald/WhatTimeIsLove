@@ -6,6 +6,8 @@
 
 		// Holds the data that is currently rendered on screen
 		this.viewDate = new Date();
+		this.viewDate.setHours(12);
+		this.viewDate.setMinutes(0);
 
 		// Holds the data that user submits to the original input
 		this.date = null;
@@ -41,6 +43,7 @@
 			this.buildYearHTML();
 			this.buildTimeHTML();
 			this.buildSubmitHTML();
+			this.buildPreviewHTML();
 
 			// Bind handlers to events
 			this.daysBindEvents();
@@ -54,13 +57,39 @@
 
 			// Render initial values
 			this.updateView();
+
+			// Set time
+			this.setTime(this.viewDate.getHours(), this.viewDate.getMinutes());
+		},
+
+		setTime : function(hours, minutes) {
+			this.iScroll.hours.goToPage(0, this.viewDate.getHours() - 1, 0); // IScroll.utils.ease.bounce);
+			this.iScroll.minutes.goToPage(0, this.viewDate.getMinutes(), 0); // IScroll.utils.ease.bounce);
 		},
 
 		updateView : function() {
-			console.log(this.date);
 			this.container.year.input.setAttribute('value', this.viewDate.getFullYear());
 			this.container.month.value.innerHTML = this.getMonthString(this.viewDate.getMonth());
 			this.renderDays();
+		},
+
+		updatePreview : function() {
+			if( this.date === null ) { this.container.preview.innerHTML = ''; return false; }
+
+			var dateOptions = {
+				year: 	 'numeric',
+				month:   'long',
+				day:     'numeric',
+				weekday: 'long'
+			}
+			var previewDate = this.date.toLocaleDateString(navigator.language, dateOptions);
+
+			var timeOptions = {
+				hour12 : false
+			}
+			var previewTime = this.date.getHours() + ':' + helpers.pad(this.date.getMinutes(), 2);
+
+			this.container.preview.innerHTML = previewDate + ' @ ' + previewTime;
 		},
 
 		getDateTime : function() {
@@ -111,7 +140,6 @@
 		 	var currentDate = calendarStart;
 		 	var activeDate = helpers.getStringDate(this.date);
 		 	var today = helpers.getStringDate(new Date());
-		 	console.log('activeDate: ' + activeDate);
 
 		 	var cssClass = '';
 		 	var trs = [];
@@ -184,7 +212,7 @@
 		  * Value functions
 		  */
 
-		 setValue : function() {
+		setValue : function() {
 		 	if( this.date === null ) { this.date = new Date(); }
 
 		 	this.date.setYear(this.viewDate.getFullYear());
@@ -193,8 +221,16 @@
 		 	this.date.setHours(this.viewDate.getHours());
 		 	this.date.setMinutes(this.viewDate.getMinutes());
 
+		 	this.updatePreview();
 		 	this.updateInput();
-		 },
+		},
+
+		destroyValue : function() {
+			this.date = null;
+
+			this.updatePreview();
+			this.element.setAttribute('value', '');
+		},
 
 		updateInput : function() {
 			this.element.setAttribute('value', this.getDateTime());
@@ -210,13 +246,11 @@
 			timeZoneOffset = x.getTimezoneOffset() / 60;
 			// Handle minutes in offset
 			if( timeZoneOffset % 1 === 0 ) {
-				//console.log('No minutes');
 				timeZoneOffset = timeZoneOffset.toString() + ':00';
 			} else {
 				timeZoneOffset = timeZoneOffset.toString().split('.');
 				timeZoneOffsetMinutes = ( 60 / ( 10 / parseInt(timeZoneOffset[1]) ) );
 				timeZoneOffsetMinutes = helpers.pad(timeZoneOffsetMinutes, 2);
-				//console.log('Minutes', timeZoneOffset[0], timeZoneOffsetMinutes );
 
 				timeZoneOffset = timeZoneOffset[0] + ':' + timeZoneOffsetMinutes;
 			}
@@ -254,15 +288,20 @@
 			var clickActiveDay = function(e) {
 		 		if( e.target && e.target.nodeName == 'SPAN' ) {
 		 			var oldActive = this.getElementsByClassName('wtl-active')[0];
-		 			if( oldActive ) {
+		 			if( e.target == oldActive ) {
 		 				helpers.removeClass(oldActive, 'wtl-active');
-		 			}
-		 			e.target.className = e.target.className + ' wtl-active';
+		 				self.destroyValue();
+		 			} else {
+			 			if( oldActive ) {
+			 				helpers.removeClass(oldActive, 'wtl-active');
+			 			}
+			 			e.target.className = e.target.className + ' wtl-active';
 
-		 			self.viewDate.setYear( e.target.getAttribute('data-year') );
-		 			self.viewDate.setMonth( e.target.getAttribute('data-month') );
-		 			self.viewDate.setDate( e.target.getAttribute('data-date') );
-					self.setValue();
+			 			self.viewDate.setYear( e.target.getAttribute('data-year') );
+			 			self.viewDate.setMonth( e.target.getAttribute('data-month') );
+			 			self.viewDate.setDate( e.target.getAttribute('data-date') );
+						self.setValue();
+					}
 		 		}
 			}
 			this.container.days.table.addEventListener('click', clickActiveDay);
@@ -324,6 +363,8 @@
 			this.iScroll.hours.on('scrollEnd', function(e) {
 				var value = WhatTimeIsLove.helpers.getIScrollPage(this) + 1;
 				self.viewDate.setHours(value);
+				if( self.date !== null ) { self.setValue(); }
+
 			});
 			this.iScroll.minutes = new IScroll(this.container.time.minutes, {
 		 		mouseWheel: true,
@@ -333,7 +374,7 @@
 				var value = WhatTimeIsLove.helpers.getIScrollPage(this);
 				if( value == 60 ) { value = 0; }
 				self.viewDate.setMinutes(value);
-				//console.log(self.getDateTime());
+				if( self.date !== null ) { self.setValue(); }
 			});
 		},
 
@@ -342,7 +383,14 @@
 		 * Builders
 		 */
 
-		 buildSubmitHTML : function() {
+		buildPreviewHTML : function() {
+			this.container.preview = document.createElement('p');
+			this.container.preview.className = 'wtl-preview';
+
+			this.container.appendChild(this.container.preview);
+		},
+
+		buildSubmitHTML : function() {
 		 	// Text
 		 	var submitText = document.createTextNode('Done!');
 
@@ -353,7 +401,7 @@
 
 		 	// Append to container
 		 	this.container.appendChild(this.container.submit);
-		 },
+		},
 
 		buildDayHTML : function() {
 			// Wrapper for day selector
@@ -498,9 +546,9 @@
 			for( i = 1 ; i < 25 ; ++i ) {
 				text = i.toString();
 				if( text.length > 1 ) {
-					returnString+= '<li><span>' + text.charAt(0) + '</span><span>' + text.charAt(1) + '</span></li>';
+					returnString+= '<li value="'+i+'"><span>' + text.charAt(0) + '</span><span>' + text.charAt(1) + '</span></li>';
 				} else {
-					returnString+= '<li><span></span><span>' + text + '</span></li>';
+					returnString+= '<li value="'+i+'"><span></span><span>' + text + '</span></li>';
 				}
 			}
 			returnString+= '<li>&nbsp;</li>';
@@ -512,7 +560,7 @@
 			var returnString = '';
 			for( i = 0 ; i < 60 ; ++i ) {
 				if( i < 10 ) { text = '0' + i; } else { text = i + ''; }
-				returnString+= '<li><span>' + text.charAt(0) + '</span><span>' + text.charAt(1) + '</span></li>';
+				returnString+= '<li value="'+i+'"><span>' + text.charAt(0) + '</span><span>' + text.charAt(1) + '</span></li>';
 			}
 			returnString+= '<li>00</li>';
 			returnString+= '<li>&nbsp;</li>';
@@ -565,6 +613,18 @@
 			if( typeof(date) !== 'object' || date === null ) { return null; }
 			if( typeof(date.getMonth) !== 'function' ) { return null; }
 			return date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate();
+		},
+
+		getElementsByAttribute : function(elements, attr, value) {
+			var returnArray = [];
+			for( i = 0; i < elements.length ; ++i ) {
+				//if( elements[i].typeof() === 'object' ) {
+					if( elements[i].getAttribute(attr) == value ) {
+						returnArray.push(elements[i]);
+					}
+				//}
+			}
+			return returnArray;
 		}
 	}
 	WhatTimeIsLove.helpers = helpers;
