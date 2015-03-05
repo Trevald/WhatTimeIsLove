@@ -3,15 +3,29 @@
 
 	WhatTimeIsLove = function(el, options) {
 		this.element = typeof el == 'string' ? document.querySelector(el) : el;
+		this.view = {
+			year    : 0,
+			month   : 0,
+			day     : 0,
+			hours   : 0,
+			minutes : 0,
+			date : function() {
+				return new Date(this.year, this.month, this.day, this.hours, this.minutes);
+			}
+		}
 		this.values = {
 			year    : 0,
 			month   : 0,
 			day     : 0,
 			hours   : 0,
-			minutes : 0
+			minutes : 0,
+			date : function() {
+				return new Date(this.year, this.month, this.day, this.hours, this.minutes);
+			}
 		}
 
-		this.date = new Date();
+		this.viewDate = new Date();
+		this.valueDate = null;
 
 		this._init();
 	}
@@ -50,6 +64,7 @@
 			this.monthBindEvents();
 			this.yearBindEvents();
 			this.timeBindIScroll();
+			this.submitBindEvents();
 
 			// Get the current timezone
 			this.timeZoneOffset = this.getTimezoneOffset();
@@ -62,32 +77,23 @@
 		},
 
 		update : function() {
-			var value = this.getDateTime();
-			this.date.setYear(this.values.year);
-			this.date.setMonth(this.values.month);
-			this.date.setDate(this.values.day);
-			this.date.setHours(this.values.hours);
-			this.date.setMinutes(this.values.minutes);
-
-			this.container.year.input.setAttribute('value', this.values.year);
-			this.container.month.value.innerHTML = this.getMonthString(this.values.month);
+			this.container.year.input.setAttribute('value', this.view.year);
+			this.container.month.value.innerHTML = this.getMonthString(this.view.month);
 			this.renderDays();
 
-			this.element.setAttribute('value', value);
-			console.log(this.date);
+			//this.element.setAttribute('value', this.date());
 		},
 
 		getDate : function() {
-			return new Date(this.values.year, this.values.month, this.values.day );
+			return new Date(this.view.year, this.view.month, this.view.day );
 		},
 
 		getDateTime : function() {
-			var year  	= helpers.pad(this.values.year, 4);
-			var month 	= helpers.pad(this.values.month+1, 2);
-			var day   	= helpers.pad(this.values.day, 2);
-			var hours 	= helpers.pad(this.values.hours, 2);
-			var minutes = helpers.pad(this.values.minutes, 2);
-
+			var year  	= helpers.pad(this.view.year, 4);
+			var month 	= helpers.pad(this.view.month+1, 2);
+			var day   	= helpers.pad(this.view.day, 2);
+			var hours 	= helpers.pad(this.view.hours, 2);
+			var minutes = helpers.pad(this.view.minutes, 2);
 
 			var dateTime = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':00' + this.timeZoneOffset;
 			//var dateTime = new Date(year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':00' + this.timeZoneOffset).toISOString()
@@ -97,11 +103,11 @@
 
 		setStartDate : function() {
 			var now = new Date();
-			this.values.year = now.getFullYear();
-			this.values.month = now.getMonth();
-			this.values.day = now.getDate(); this.values.day = 19;
-			this.values.hours = now.getHours();
-			this.values.minutes = now.getMinutes();
+			this.view.year = now.getFullYear();
+			this.view.month = now.getMonth();
+			this.view.day = now.getDate(); this.view.day = 19;
+			this.view.hours = now.getHours();
+			this.view.minutes = now.getMinutes();
 			this.update();
 		},
 
@@ -110,10 +116,9 @@
 		 */
 
 		setYear : function(value) {
-		 	this.values.year = value;
+		 	this.view.year = value;
 		 	this.update();
 		},
-
 
 		/*
 		 * Month functions
@@ -121,11 +126,11 @@
 
 		setMonth : function(value) {
 		 	if( value < 0 ) {
-		 		this.values.month = 11;
+		 		this.view.month = 11;
 		 	} else if( value > 11 ) {
-		 		this.values.month = 0;
+		 		this.view.month = 0;
 		 	} else {
-		 		this.values.month = value;
+		 		this.view.month = value;
 		 	}
 
 		 	this.update();
@@ -137,17 +142,18 @@
 
 		renderDays : function() {
 		 	var calendarStart = this.getCalendarStart();
-		 	var calendarEnd = this.getCalendarEnd();
-		 	//console.log(calendarStart, calendarEnd);
+		 	var calendarEnd   = this.getCalendarEnd();
 
-		 	var currentDate = calendarStart;
 		 	var now = new Date();
-		 	var todayTimestamp = new Date(this.values.year, this.values.month, this.values.day).getTime();
+		 	var currentDate = calendarStart;
+		 	var activeDate = helpers.getStringDate(this.values.date());
 		 	var nowTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-		 	var weeksHTML = '';
+
 		 	var cssClass = '';
 		 	var trs = [];
 		 	var tds = [];
+
+		 	console.log('activeDate:' + activeDate);
 
 		 	// Remove old TDs
 		 	while (this.container.days.tbody.firstChild) {
@@ -156,9 +162,6 @@
 
 		 	while( currentDate <= calendarEnd ) {
 		 		cssClass = 'wtl-table-cell';
-
-		 		// Sunday
-		 		if( currentDate.getDay() == 0 ) { weeksHTML+= '<tr>'; }
 
 		 		// Sunday
 		 		if( currentDate.getDay() == 0 ) {
@@ -171,58 +174,76 @@
 		 		tds[tds.length] = document.createElement('span');
 
 		 		// Older month
-		 		if( currentDate.getMonth() < this.values.month ) { cssClass+= ' wtl-previous-month '; tds[tds.length-1].classList.add('wtl-previous-month'); }
+		 		if( currentDate.getMonth() < this.view.month ) { cssClass+= ' wtl-previous-month '; }
 
 		 		// Later month
-		 		if( currentDate.getMonth() > this.values.month ) { cssClass+= ' wtl-next-month '; tds[tds.length-1].classList.add('wtl-next-month');}
+		 		if( currentDate.getMonth() > this.view.month ) { cssClass+= ' wtl-next-month '; }
 
 		 		// Today
-		 		if( currentDate.getTime() == nowTimestamp ) { cssClass+= ' wtl-today '; tds[tds.length-1].classList.add('wtl-today');}
+		 		if( currentDate.getTime() == nowTimestamp ) { cssClass+= ' wtl-today '; }
 
-		 		// Selected
-		 		if( currentDate.getTime() == todayTimestamp ) { cssClass+= ' wtl-active '; tds[tds.length-1].classList.add('wtl-active');}
-
-		 		weeksHTML+= '<td class="' + cssClass + '">' + currentDate.getDate() + '</td>';
-
+		 		// Active
+		 		if( helpers.getStringDate(currentDate) == activeDate ) { cssClass+= ' wtl-active '; }
 
 		 		tds[tds.length-1].className = cssClass;
+		 		tds[tds.length-1].setAttribute('data-year', currentDate.getFullYear());
+		 		tds[tds.length-1].setAttribute('data-month', currentDate.getMonth());
+		 		tds[tds.length-1].setAttribute('data-date', currentDate.getDate());
 		 		tds[tds.length-1].appendChild(
 		 			document.createTextNode(currentDate.getDate())
 		 		);
 		 		trs[trs.length-1].appendChild(tds[tds.length-1]);
-		 		//this.container.days.tbody.appendChild(tds[tds.length-1]);
-
-
-		 		// Saturday
-		 		if( currentDate.getDay() == 6 ) { weeksHTML+= '</tr>'; }
 
 		 		currentDate.setDate( currentDate.getDate() + 1 );
 		 	}
-
-
-		 	//this.container.days.tbody.innerHTML = weeksHTML;
-
-
 		},
 
 		getCalendarStart : function() {
-		 	var firstOfMonth = new Date(this.values.year, this.values.month, 1);
+		 	var firstOfMonth = new Date(this.view.year, this.view.month, 1);
 		 	var firstOfMonthWeekday = firstOfMonth.getDay();
 		 	//console.log('This month starts on a: ' + firstOfMonthWeekday);
-		 	var calendarStart = new Date(this.values.year, this.values.month, 1);
+		 	var calendarStart = new Date(this.view.year, this.view.month, 1);
 		 	calendarStart.setDate(calendarStart.getDate() - firstOfMonthWeekday );
 		 	//console.log('calendarStart: ' + calendarStart);
 		 	return calendarStart;
 		},
 
 		getCalendarEnd : function() {
-		 	var lastOfMonth = new Date(this.values.year, this.values.month + 1, 0);
+		 	var lastOfMonth = new Date(this.view.year, this.view.month + 1, 0);
 		 	var lastOfMonthWeekday = lastOfMonth.getDay();
 		 	//console.log('This month ends on a: ' + lastOfMonthWeekday);
-		 	var calendarEnd = new Date(this.values.year, this.values.month + 1, 0);
+		 	var calendarEnd = new Date(this.view.year, this.view.month + 1, 0);
 		 	calendarEnd.setDate(calendarEnd.getDate() + ( 6 - lastOfMonthWeekday ) );
 		 	//console.log('calendarEnd: ' + calendarEnd);
 		 	return calendarEnd;
+		},
+
+		 /*
+		  * Value functions
+		  */
+
+		 setValue : function() {
+		 	this.values.year    = this.view.year;
+		 	this.values.month   = this.view.month;
+		 	this.values.day     = this.view.day;
+		 	this.values.hours   = this.view.hours;
+		 	this.values.minutes = this.view.minutes;
+		 	this.updateInput();
+		 },
+
+		 updateInput : function() {
+		 	this.element.setAttribute('value', this.getDateTime());
+		 },
+
+		 /*
+		  * Date functions
+		  */
+
+		setDate : function(value) {
+			this.view.year = value.getFullYear();
+			this.view.month = value.getMonth();
+			this.view.day = value.getDate();
+			this.update();
 		},
 
 		 /*
@@ -230,8 +251,8 @@
 		  */
 
 		 setDay : function(value) {
-		 	this.values.day = value;
-		 	this.update();
+		 	this.view.day = value;
+		 	//this.update();
 		 },
 
 		/*
@@ -279,40 +300,44 @@
 		/*
 		 * Bind events
 		 */
+
+		submitBindEvents : function() {
+			var self = this;
+
+			var triggerSubmit = function() {
+				console.log(1);
+				self.setValue();
+			}
+
+			this.container.submit.addEventListener('click', triggerSubmit);
+			this.container.submit.addEventListener('touchstart', triggerSubmit);
+
+		},
+
 		daysBindEvents : function() {
 			var self = this;
 
 			// Handlers
 			var clickActiveDay = function(e) {
-				//this.style.display = 'none';
-				console.log(e);
-				console.log($(e.target));
-				//e.target.style.display = 'none';
-
-
-
 		 		if( e.target && e.target.nodeName == 'SPAN' ) {
-		 			//console.log(this.getElementsByTagName('td'));
-		 			//var oldActive = helpers.getElementByClassName( this.getElementsByTagName('td'), 'wtl-active');
 		 			var oldActive = this.getElementsByClassName('wtl-active')[0];
-		 			//this.getElementsByClassName('wtl-active')[0].className = '';
-
-		 			console.log(oldActive);
 		 			if( oldActive ) {
-		 				//oldActive.classList.remove('wtl-active');
 		 				helpers.removeClass(oldActive, 'wtl-active');
 		 			}
-		 			//console.log(e.target);
 		 			e.target.className = e.target.className + ' wtl-active';
-		 			//e.target.classList.add('wtl-active');
-		 			//e.target.className = 'wtl-active';
-		 			self.setDay(e.target.innerHTML);
+		 			var date = new Date(
+		 				e.target.getAttribute('data-year'),
+		 				e.target.getAttribute('data-month'),
+		 				e.target.getAttribute('data-date')
+		 			);
+		 			console.log(e.target.getAttribute('data-date'));
+		 			console.log(date);
+		 			self.setDay(e.target.getAttribute('data-date'));
+		 			self.setDate(date);
 		 		}
 			}
 			this.container.days.table.addEventListener('click', clickActiveDay);
-			//this.container.days.table.addEventListener('touchstart', clickActiveDay);
-
-
+			this.container.days.table.addEventListener('touchstart', clickActiveDay);
 		},
 
 		monthBindEvents : function() {
@@ -320,11 +345,11 @@
 
 			// Handlers
 		 	var previousMonth = function() {
-		 		self.setMonth( self.values.month - 1);
+		 		self.setMonth( self.view.month - 1);
 		 	}
 
 		 	var nextMonth = function() {
-		 		self.setMonth( self.values.month + 1);
+		 		self.setMonth( self.view.month + 1);
 		 	}
 
 			this.container.month.btnMinus.addEventListener('click', previousMonth);
@@ -343,11 +368,11 @@
 		 	}
 
 		 	var previousYear = function() {
-		 		self.setYear( self.values.year - 1);
+		 		self.setYear( self.view.year - 1);
 		 	}
 
 		 	var nextYear = function() {
-		 		self.setYear( self.values.year + 1);
+		 		self.setYear( self.view.year + 1);
 		 	}
 
 			this.container.year.btnMinus.addEventListener('click', previousYear);
@@ -369,7 +394,7 @@
 			});
 			this.iScroll.hours.on('scrollEnd', function(e) {
 				var value = WhatTimeIsLove.helpers.getIScrollPage(this) + 1;
-				self.values.hours = value;
+				self.view.hours = value;
 				//console.log(self.getDateTime());
 				//console.log( WhatTimeIsLove.helpers.getIScrollPage(this) + 1);
 			});
@@ -380,7 +405,7 @@
 			this.iScroll.minutes.on('scrollEnd', function(e) {
 				var value = WhatTimeIsLove.helpers.getIScrollPage(this);
 				if( value == 60 ) { value = 0; }
-				self.values.minutes = value;
+				self.view.minutes = value;
 				//console.log(self.getDateTime());
 			});
 		},
@@ -630,6 +655,15 @@
 
 		removeClass : function(element, remove) {
 			element.className = element.className.replace( new RegExp(" ?\\b"+remove+"\\b") ,'');
+		},
+
+		/**
+		 * [getStringDate description]
+		 * @param  {Date object} date
+		 * @return {String}
+		 */
+		getStringDate : function(date) {
+			return date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate();
 		}
 	}
 	WhatTimeIsLove.helpers = helpers;
