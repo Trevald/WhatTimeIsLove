@@ -30,12 +30,17 @@
 		},
 
 		_init : function() {
-			this.element.style.display = 'none';
+			//this.element.style.display = 'none';
+
+			// Create and append the wrapper
+			this.wrapper = document.createElement('div');
+			this.wrapper.className = 'wtl-wrapper';
+			this.element.parentNode.insertBefore(this.wrapper, this.element.nextSibling);
 
 			// Create and append the container
 			this.container = document.createElement('div');
 			this.container.className = 'wtl-container';
-			this.element.parentNode.insertBefore(this.container, this.element.nextSibling);
+			this.wrapper.appendChild(this.container);
 
 			// Build the HTML
 			this.buildMonthHTML();
@@ -51,6 +56,7 @@
 			this.yearBindEvents();
 			this.timeBindIScroll();
 			this.submitBindEvents();
+			this.elementBindEvents();
 
 			// Get the current timezone
 			this.timeZoneOffset = this.getTimezoneOffset();
@@ -60,6 +66,39 @@
 
 			// Set time
 			this.setTime(this.viewDate.getHours(), this.viewDate.getMinutes());
+
+			// Hide the datepicker
+			this.wrapper.style.display = 'none';
+			this.container.style.opacity = 0;
+		},
+
+		toggleVisible : function() {
+			if( this.wrapper.style.display == 'block' ) {
+				this.hide();
+			} else {
+				this.show();
+			}
+		},
+
+		show : function() {
+			var self = this;
+
+			this.wrapper.style.display = 'block';
+
+			setTimeout(function() {
+				self.container.style.opacity = 1;
+			}, 20);
+
+		},
+
+		hide : function() {
+			var self = this;
+
+			this.container.style.opacity = 0;
+
+			setTimeout(function() {
+				self.wrapper.style.display = 'none';
+			}, 320);
 		},
 
 		setTime : function(hours, minutes) {
@@ -269,12 +308,24 @@
 		 * Bind events
 		 */
 
+		elementBindEvents : function() {
+			var self = this;
+
+			var toggleVisible = function() {
+				self.toggleVisible();
+			}
+
+			this.element.addEventListener('focus', toggleVisible);
+		},
+
 		submitBindEvents : function() {
 			var self = this;
 
-			var triggerSubmit = function() {
-				//self.setValue();
-				// Close datepicker
+			var triggerSubmit = function(e) {
+				e.preventDefault();
+				self.toggleVisible();
+
+				return false;
 			}
 
 			this.container.submit.addEventListener('click', triggerSubmit);
@@ -657,7 +708,3 @@ if (!Date.prototype.toISOString) {
 
   }());
 }
-
-$(document).on('ready', function() {
-	var wtl = new WhatTimeIsLove('#wtl-input', {});
-});
