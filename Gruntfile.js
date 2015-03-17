@@ -14,11 +14,11 @@ module.exports = function(grunt) {
 			}
 		},
 		sass: {
-			options: {
-				sourceMap: true,
-				outputStyle: 'compressed'
-			},
 			dist: {
+				options: {
+					sourcemap: 'auto',
+					style: 'expanded'
+				},
 				files: {
 					'assets/css/style.css': 'assets/sass/style.scss'
 				}
@@ -32,7 +32,7 @@ module.exports = function(grunt) {
 		}
 	});
 	grunt.loadNpmTasks('grunt-autoprefixer');
-	grunt.loadNpmTasks('grunt-sass');
+	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask('default', ['sass:dist', 'watch', 'autoprefixer']);

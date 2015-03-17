@@ -4,18 +4,27 @@
 	right: 0;
 	left: 0;
 
-	padding-top: 10px;
-	height: 70px;
+	padding-top: 5px;
+	height: 50px;
 
 	background-color: white;
 	box-shadow: rgba(0,0,0,.15) 0 1px 3px;
+
+	@include at-small-portrait {
+		padding-top: 10px;
+		height: 70px;
+	}
 }
 
 .wtl-year-input-wrapper {
 	position: relative;
 
-	width: 100px;
+	width: 70px;
 	margin: 0 auto;
+
+	@include at-small-portrait {
+		width: 100px;
+	}
 }
 
 .wtl-year input {
@@ -24,13 +33,19 @@
 	padding: 5px;
 	margin: 0 auto;
 
-	font-size: 36px;
-	line-height: 36px;
+	font-family: $fontLight;
+	font-size: 24px;
+	line-height: 24px;
 	text-align: center;
 	color: rgba(0,0,0,.5);
 
 	box-shadow: none;
 	border: none;
+
+	@include at-small-portrait {
+		font-size: 36px;
+		line-height: 36px;
+	}
 }
 
 .wtl-year input:focus {
@@ -43,32 +58,51 @@
 	position: absolute;
 	cursor: pointer;
 
-	padding: 5px 15px;
-
-	font-size: 24px;
-	line-height: 30px;
 	color: #82949E;
+
+	&,
+	&:hover,
+	&:active { text-decoration: none; }
 }
 
 .wtl-btn-edit {
+	top: 2px;
+	right: -20px;
+
+	padding: 10px;
+
+	font-size: 14px;
+	line-height: 14px;
+
+	@include at-small-portrait {
+		top: 5px;
+
+		font-size: 18px;
+		line-height: 18px;
+	}
+}
+
+.wtl-btn-minus,
+.wtl-btn-plus {
+	top: 5px;
+
+	padding: 5px 15px;
+
 	font-size: 18px;
-	line-height: 18px;
+	line-height: 24px;
+
+	@include at-small-portrait {
+		top: 15px;
+
+		font-size: 24px;
+		line-height: 30px;
+	}
 }
 
 .wtl-btn-minus {
-	top: 15px;
 	left: 10px;
 }
 
 .wtl-btn-plus {
-	top: 15px;
 	right: 10px;
 }
-
-.wtl-btn-edit {
-	top: 5px;
-	right: -20px;
-
-	padding: 10px;
-}
-

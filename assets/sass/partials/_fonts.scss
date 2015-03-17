@@ -35,31 +35,14 @@
 
 /* FONTS */
 
-.wtl-submit,
-.wtl-table-cell,
-.wtl-year input,
-.wtl-seperator,
-.wtl-iscroll ul li {
-	font-family: 'Aleo Light', 'HelveticaNeue-UltraLight', 'Calibri', 'Arial', sans-serif;
-	font-weight: normal;
-	-webkit-font-smoothing: antialiased;
-}
-
-.wtl-preview,
-.wtl-today,
-.wtl-active,
-.wtl-table-heading,
-.wtl-month-value {
-    font-family: 'Aleo Regular', 'HelveticaNeue-UltraLight', 'Calibri', 'Arial', sans-serif;
-    font-weight: normal;
-    -webkit-font-smoothing: antialiased;
-}
+$fontThin    : 'HelveticaNeue-Thin', 'Calibri', 'Arial', sans-serif;
+$fontLight   : 'HelveticaNeue-Light', 'Calibri', 'Arial', sans-serif;
+$fontRegular : 'HelveticaNeue', 'Calibri', 'Arial', sans-serif;
+$fontBold    : 'HelveticaNeue-Bold', 'Calibri', 'Arial', sans-serif;
 
 .wtl-time:before,
 .wtl-btn-minus,
 .wtl-btn-plus,
 .wtl-btn-edit {
 	font-family: 'Wtl Icons';
-	font-weight: normal;
-	-webkit-font-smoothing: antialiased;
 }

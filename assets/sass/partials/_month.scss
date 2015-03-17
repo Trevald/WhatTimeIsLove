@@ -1,11 +1,16 @@
 .wtl-month {
 	position: relative;
 
-	padding: 25px 0;
+	padding: 15px 0;
 	background-color: #e2e2e4;
+
+	@include at-small-portrait {
+		padding: 25px 0;
+	}
 }
 
 .wtl-month-value {
+	font-family: $fontRegular;
 	font-size: 18px;
 	line-height: 18px;
 	text-align: center;
@@ -14,18 +19,30 @@
 
 .wtl-month .wtl-btn-minus,
 .wtl-month .wtl-btn-plus {
-	top: 15px;
+	top: 5px;
 
 	padding: 10px 15px;
 
 	font-size: 18px;
 	line-height: 18px;
+
+	@include at-small-portrait {
+		top: 15px;
+	}
 }
 
 .wtl-month .wtl-btn-minus {
 	left: 80px;
+
+	@include at-landscape {
+		left: 40px;
+	}
 }
 
 .wtl-month .wtl-btn-plus {
 	right: 80px;
+
+	@include at-landscape {
+		right: 40px;
+	}
 }

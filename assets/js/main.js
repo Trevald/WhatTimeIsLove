@@ -31,6 +31,7 @@
 
 		_init : function() {
 			//this.element.style.display = 'none';
+			this.element.addEventListener('focus', function() { this.blur(); return false; });
 
 			// Create and append the wrapper
 			this.wrapper = document.createElement('div');
@@ -41,6 +42,11 @@
 			this.container = document.createElement('div');
 			this.container.className = 'wtl-container';
 			this.wrapper.appendChild(this.container);
+
+			// Create and append the container for the calendar
+			this.calendar = document.createElement('div');
+			this.calendar.className = 'wtl-calendar';
+			this.container.appendChild(this.calendar);
 
 			// Build the HTML
 			this.buildMonthHTML();
@@ -68,12 +74,12 @@
 			this.setTime(this.viewDate.getHours(), this.viewDate.getMinutes());
 
 			// Hide the datepicker
-			this.wrapper.style.display = 'none';
-			this.container.style.opacity = 0;
+			//this.wrapper.style.display = 'none';
+			//this.container.style.opacity = 0;
 		},
 
 		toggleVisible : function() {
-			if( this.wrapper.style.display == 'block' ) {
+			if( this.wrapper.style.display == 'flex' ) {
 				this.hide();
 			} else {
 				this.show();
@@ -83,7 +89,7 @@
 		show : function() {
 			var self = this;
 
-			this.wrapper.style.display = 'block';
+			this.wrapper.style.display = 'flex';
 
 			setTimeout(function() {
 				self.container.style.opacity = 1;
@@ -323,13 +329,11 @@
 
 			var triggerSubmit = function(e) {
 				e.preventDefault();
-				self.toggleVisible();
 
-				return false;
+				self.toggleVisible();
 			}
 
-			this.container.submit.addEventListener('click', triggerSubmit);
-			this.container.submit.addEventListener('touchstart', triggerSubmit);
+			this.container.submit.addEventListener(helpers.clickEventType(), triggerSubmit);
 		},
 
 		daysBindEvents : function() {
@@ -337,7 +341,9 @@
 
 			// Handlers
 			var clickActiveDay = function(e) {
+
 		 		if( e.target && e.target.nodeName == 'SPAN' ) {
+
 		 			var oldActive = this.getElementsByClassName('wtl-active')[0];
 		 			if( e.target == oldActive ) {
 		 				helpers.removeClass(oldActive, 'wtl-active');
@@ -355,27 +361,24 @@
 					}
 		 		}
 			}
-			this.container.days.table.addEventListener('click', clickActiveDay);
-			this.container.days.table.addEventListener('touchstart', clickActiveDay);
+
+			this.container.days.table.addEventListener(helpers.clickEventType(), clickActiveDay);
 		},
 
 		monthBindEvents : function() {
 			var self = this;
 
 			// Handlers
-		 	var previousMonth = function() {
+		 	var previousMonth = function(e) {
 		 		self.setMonth( self.viewDate.getMonth() - 1);
 		 	}
 
-		 	var nextMonth = function() {
+		 	var nextMonth = function(e) {
 		 		self.setMonth( self.viewDate.getMonth() + 1);
 		 	}
 
-			this.container.month.btnMinus.addEventListener('click', previousMonth);
-			this.container.month.btnMinus.addEventListener('touchstart', previousMonth);
-
-			this.container.month.btnPlus.addEventListener('click', nextMonth);
-			this.container.month.btnPlus.addEventListener('touchstart', nextMonth);
+			this.container.month.btnMinus.addEventListener(helpers.clickEventType(), previousMonth);
+			this.container.month.btnPlus.addEventListener(helpers.clickEventType(), nextMonth);
 		},
 
 		yearBindEvents : function() {
@@ -386,22 +389,17 @@
 		 		self.container.year.input.focus();
 		 	}
 
-		 	var previousYear = function() {
+		 	var previousYear = function(e) {
 		 		self.setYear( self.viewDate.getFullYear() - 1);
 		 	}
 
-		 	var nextYear = function() {
+		 	var nextYear = function(e) {
 		 		self.setYear( self.viewDate.getFullYear() + 1);
 		 	}
 
-			this.container.year.btnMinus.addEventListener('click', previousYear);
-			this.container.year.btnMinus.addEventListener('touchstart', previousYear);
-
-			this.container.year.btnPlus.addEventListener('click', nextYear);
-			this.container.year.btnPlus.addEventListener('touchstart', nextYear);
-
-			this.container.year.btnEdit.addEventListener('click', editYear);
-			this.container.year.btnEdit.addEventListener('touchstart', editYear);
+			this.container.year.btnMinus.addEventListener(helpers.clickEventType(), previousYear);
+			this.container.year.btnPlus.addEventListener(helpers.clickEventType(), nextYear);
+			this.container.year.btnEdit.addEventListener(helpers.clickEventType(), editYear);
 		},
 
 		timeBindIScroll : function() {
@@ -446,7 +444,7 @@
 		 	var submitText = document.createTextNode('Done!');
 
 		 	// Submit button
-		 	this.container.submit = document.createElement('button');
+		 	this.container.submit = document.createElement('a');
 		 	this.container.submit.className = 'wtl-submit';
 		 	this.container.submit.appendChild(submitText);
 
@@ -482,7 +480,7 @@
 			this.container.days.table.appendChild(this.container.days.thead);
 			this.container.days.table.appendChild(this.container.days.tbody);
 			this.container.days.appendChild(this.container.days.table);
-			this.container.appendChild(this.container.days);
+			this.calendar.appendChild(this.container.days);
 
 		},
 
@@ -513,7 +511,7 @@
 			this.container.month.appendChild(this.container.month.value);
 			this.container.month.appendChild(this.container.month.btnMinus);
 			this.container.month.appendChild(this.container.month.btnPlus);
-			this.container.appendChild(this.container.month);
+			this.calendar.appendChild(this.container.month);
 
 		},
 
@@ -556,7 +554,7 @@
 			this.container.year.appendChild(this.container.year.wrapper);
 			this.container.year.appendChild(this.container.year.btnMinus);
 			this.container.year.appendChild(this.container.year.btnPlus);
-			this.container.appendChild(this.container.year);
+			this.calendar.appendChild(this.container.year);
 
 		},
 
@@ -676,6 +674,10 @@
 				//}
 			}
 			return returnArray;
+		},
+
+		clickEventType : function() {
+			return ('ontouchstart' in document) ? 'touchend' : 'click';
 		}
 	}
 	WhatTimeIsLove.helpers = helpers;

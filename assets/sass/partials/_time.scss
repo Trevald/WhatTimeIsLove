@@ -11,6 +11,13 @@
 
 	padding: 0 15px;
 
+	@include at-landscape {
+		position: absolute;
+		top: 20vh;
+		left: 75%;
+		margin: 0 0 0 -90px;
+	}
+
 }
 
 .wtl-time:before {
@@ -20,8 +27,15 @@
 	top: 30px;
 	left: -30px;
 
-	font-size: 18px;
+	font-size: 16px;
 	color: rgba(0,0,0,.25);
+
+	@include at-landscape {
+		top: -25px;
+		left: 50%;
+
+		margin: 0 0 0 -8px;
+	}
 }
 
 .wtl-time-shadows {
@@ -56,6 +70,7 @@
 	top: 17px;
 	left: 48%;
 
+	font-family: $fontThin;
 	font-size: 42px;
 	line-height: 42px;
 	color: #82949E;
@@ -75,6 +90,7 @@
 }
 
 .wtl-time .wtl-iscroll ul li {
+	font-family: $fontThin;
 	font-size: 42px;
 	line-height: 42px;
 	color: #82949E;

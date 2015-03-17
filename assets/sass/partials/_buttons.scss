@@ -7,25 +7,53 @@
 
 	display: block;
 	width: 100%;
-	padding: 20px 0;
+	padding: 10px 0;
 
-	font-size: 30px;
-	line-height: 32px;
+	font-family: $fontLight;
+	font-size: 24px;
+	line-height: 26px;
 	color: #fff;
 	text-align: center;
+	text-decoration: none;
+
 	background-color: rgba(255,0,0,.4);
 	border: none;
 	cursor: pointer;
 
-	-webkit-appearance: none;
 	transition: all ease .3s;
+
+	&,
+	&:hover,
+	&:active {
+		text-decoration: none;
+	}
+
+	@include at-small-portrait {
+		padding: 20px 0;
+
+		font-size: 30px;
+		line-height: 32px;
+	}
+
+	@include at-landscape {
+		top: 60vh;
+		right: auto;
+		bottom: auto;
+		left: 75%;
+
+		width: 180px;
+		margin: 0 0 0 -90px;
+
+		border-radius: 3px;
+	}
 }
 
 .wtl-submit:hover {
+	color: white;
 	background-color: rgba(255,0,0,.3);
 }
 
 .wtl-submit:active {
-	padding: 22px 0 18px;
-	//background-color: rgba(255,0,0,.5);
+	color: white;
+	background-color: rgba(255,0,0,.5);
 }

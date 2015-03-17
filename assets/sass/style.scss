@@ -7,9 +7,21 @@
 @import 'partials/_buttons.scss';
 @import 'partials/_preview.scss';
 
-html { box-sizing: border-box; }
+html {
+	box-sizing: border-box;
 
-*, *:before, *:after { box-sizing: inherit; }
+	font-weight: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit;
+
+	font-weight: inherit;
+	-webkit-font-smoothing: inherit;
+	-moz-font-smoothing: inherit;
+}
 
 body {
 	background-color: #f0f0f0;
@@ -17,36 +29,77 @@ body {
 }
 
 .wtl-wrapper {
-	//display: none;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+
+	display: flex;
+  	align-items: center;
+
+	background-color: #FFF1F0;
+	//background-color: rgba(255,255,255,.8);
+
 }
 
 .wtl-container {
 	position: relative;
 	margin: 0 auto;
 	background-color: #FFF1F0;
-	box-shadow: rgba(0,0,0,.05) 0 1px 3px;
+	//box-shadow: rgba(0,0,0,.05) 0 1px 3px;
 	max-width: 400px;
+	height: 100%;
+	max-height: 750px;
 
-	padding: 70px 0 90px 0;
+	padding-bottom: 70px;
+
+	@include at-small-portrait {
+		padding-bottom: 90px;
+	}
 }
 
 .wtl-container {
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
 	max-width: inherit;
 
 	transition: opacity .3s ease;
+
+	@include at-landscape {
+		padding: 20px;
+
+		height: auto;
+		max-height: inherit;
+	}
 }
 
 
 .wtl-container {
-	  -webkit-touch-callout: none;
+	 -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.wtl-calendar {
+	overflow: hidden;
+
+	padding-top: 50px;
+	margin-bottom: 15px;
+
+	@include at-small-portrait {
+		padding-top: 70px;
+	}
+
+	@include at-landscape {
+		position: relative;
+
+		width: 50%;
+		margin-bottom: 0;
+
+		//box-shadow: rgba(0,0,0,.15) 0 1px 3px;
+		border-radius: 2px;
+		overflow: hidden;
+	}
 }
